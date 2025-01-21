@@ -1,0 +1,1 @@
+words = ["Hipopotame", "Amour", "Bonjour", "Banane", "Salsifi", "Congere", "illimite", "Puissant", "Pikachu", "Tirlipinpon", "Zelda", "Gannondorf", "Monument", "Zlatan", "Politique"]
