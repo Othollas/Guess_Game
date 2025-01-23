@@ -7,9 +7,7 @@ from pendu import *
 word = ""
 tulpe_letter = []
 blank_word = []
-print_blank_word = ""
-
-print(math.ceil(random.random()*10))
+i=10
 
 print(""" 
 ==========================================
@@ -41,13 +39,10 @@ def set_word_for_game() :
     tulpe_letter = set(tulpe_letter)
     hide_or_show_letter(word, tulpe_letter)
     
-
-
 # Initialiser le mot avec des _ si la lettre est à false
-
 def hide_or_show_letter(word, tulpe_letter): 
    global blank_word
-   blank_word = [] 
+   blank_word = []
    for letter in word:
       for tulpe in tulpe_letter:
          if letter == tulpe[0] and tulpe[1] == False:
@@ -56,57 +51,98 @@ def hide_or_show_letter(word, tulpe_letter):
          elif letter == tulpe[0] and tulpe[1] == True:
             letter_temp = tulpe[0]
             blank_word += tulpe[0]
-   print_word()
-
-# 1\ recuperer le mot et le tulpe et pour chaque lettre dans le mot, il faut verifier si la lettre correspondante est True ou False dans le tulpe, je dois retourner mot blank _ 
-# Si il y a une entrée user, la tester avec la fonction compare_letter
-
-
-# ici à la place de juste cacher je devrais pouvoir cacher ou montrer selon si le tulpe est True ou False selon l'entrée user (mais si je fais ça je ne peux pas l'initialiser en premier lieu sauf si je lui met un parametre par defaut)
-
-def print_word() :
-   word = ""
-   for letter in blank_word :
-      word += letter
-   print(word)
+   
 
 # Fonction pour comparer l'entré avec
 def compare_letter(user_letter):
    global tulpe_letter
+   global i
    find_tulpe_letter = [tulpe for tulpe in tulpe_letter if tulpe[0] == user_letter]
    if len(find_tulpe_letter) > 0 and find_tulpe_letter[0][1] != True:
       tulpe_letter.remove((user_letter, False))
       new_entrie = (user_letter, True)
       tulpe_letter.add(new_entrie)
       return True
-   elif len(find_tulpe_letter) > 0 and find_tulpe_letter[0][1] == True: 
-      print("Vous avez deja cette lettre")
+   elif len(find_tulpe_letter) > 0 and find_tulpe_letter[0][1] == True:
+      print("Vous avez deja entré cette lettre")
    else:
-     print("Cette lettre n'existe pas")
-   
+      print("Cette lettre n'est pas dans le mot")
+      i -= 1
+     
 
+
+
+def print_word() :
+   word = ""
+   for letter in blank_word :
+      word += letter
+   print(f"""
+         Tentavive restante : {i}
+
+               {word}
+         
+         """)
+
+
+def print_pendu():
+   pendu = {0 : pendu0, 1 : pendu1, 2 : pendu2, 3 : pendu3, 4 : pendu4, 5 : pendu5, 6 : pendu6}
+   if i<10:
+      print(pendu[i])
+
+
+
+
+
+def victory_of_defeat():
+   if (i == 0):     
+      print(f"""
+         
+               Le mot était : {word}
+
+      """)
+      
+      continue_or_exit()
+
+   else:
+      list_true = [True for tulpe in tulpe_letter if tulpe[1] == True]
+      list_letter = len(tulpe_letter)
+      if len(list_true) == list_letter:
+         print("""
+               
+               Vous avez gagnez 
+               
+               """)
+         continue_or_exit()
+
+def continue_or_exit():
+   again = input("Voulez nous continuer O/N ? ").lower()
+   while again != "o" and again != "n":
+      print("Choisissez O ou N (majuscule ou minuscule)!!")
+      again = input("Voulez nous continuer O/N ? ").lower()
+   if again == "o":
+      main()
+   elif again == "n":
+      exit()
+      
 
 # Faire une entrer utilisateur 
-def get_letter_from_user():
+def game():
+   global i
    i=6
    while i >= 0:
-    print(print_blank_word)
-    user_letter = input("Entrez une lettre. ").lower()
-    if len(user_letter) > 1:
-       print(f"Non vous devez entrez qu'une seule lettre : tentative restante {i}")
-    elif user_letter.isdigit():
-       print(f"Non vous devez entrez une seule lettre pas un chiffre : tentative restante {i}")
-    else:
-      # On a bien une lettre valide donc :
-      # 1/je compare la lettre 
-      letter_exist = compare_letter(user_letter)
-      print(letter_exist)
-      if letter_exist: 
-         hide_or_show_letter(word, tulpe_letter)
-       
-       # Fonction qui compare 
-       
-       
+      print_word()
+      user_letter = input("Entrez une lettre. ").lower()
+      if len(user_letter) > 1:
+         print(f"Non vous devez entrez qu'une seule lettre : tentative restante {i}")
+      elif user_letter.isdigit():
+         print(f"Non vous devez entrez une seule lettre pas un chiffre : tentative restante {i}")
+      else: 
+         letter_exist = compare_letter(user_letter)
+         print(letter_exist)
+         if letter_exist: 
+            hide_or_show_letter(word, tulpe_letter)
+      print_pendu()
+      victory_of_defeat()
           
        
 
@@ -116,9 +152,10 @@ def main() :
    # initialise le mot
    set_word_for_game()
    # Recupere les tentatives de l'utilisateur 
-   get_letter_from_user()
+   game()
+   
 
 
-
-# on lance le programme
+# # on lance le programme
 main()
+
