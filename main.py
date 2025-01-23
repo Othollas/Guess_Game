@@ -1,9 +1,11 @@
 import math
 import random 
 from words import words as w
+from pendu import *
+
 
 word = ""
-defragmented_word = []
+tulpe_letter = []
 blank_word = []
 print_blank_word = ""
 
@@ -33,80 +35,80 @@ def get_word() :
 
 def set_word_for_game() :
     global word
-    global defragmented_word
+    global tulpe_letter
     word = get_word().lower()
-    defragmented_word = [(letter, False) for letter in word]
-    defragmented_word = set(defragmented_word)
-    hide_letter(word, defragmented_word)
-    return None
-
-
+    tulpe_letter = [(letter, False) for letter in word]
+    tulpe_letter = set(tulpe_letter)
+    hide_or_show_letter(word, tulpe_letter)
     
-
 
 
 # Initialiser le mot avec des _ si la lettre est à false
 
-def hide_letter(word, defragmented_word) : 
-  global blank_word
-  global print_blank_word
- 
-  for letter in word :
-     for tulpe in defragmented_word :
-        if letter in tulpe[0] and tulpe[1] == False :
-           letter = '_'
-           blank_word.append(letter)
-           print_blank_word += letter
- 
-def show_letter() :
-  # ici je dois verifier si les tulpes sont True ou False et montrer la lettre correspondante.
-   return None
+def hide_or_show_letter(word, tulpe_letter): 
+   global blank_word
+   blank_word = [] 
+   for letter in word:
+      for tulpe in tulpe_letter:
+         if letter == tulpe[0] and tulpe[1] == False:
+            letter_temp = "_"
+            blank_word += letter_temp  
+         elif letter == tulpe[0] and tulpe[1] == True:
+            letter_temp = tulpe[0]
+            blank_word += tulpe[0]
+   print_word()
 
+# 1\ recuperer le mot et le tulpe et pour chaque lettre dans le mot, il faut verifier si la lettre correspondante est True ou False dans le tulpe, je dois retourner mot blank _ 
+# Si il y a une entrée user, la tester avec la fonction compare_letter
+
+
+# ici à la place de juste cacher je devrais pouvoir cacher ou montrer selon si le tulpe est True ou False selon l'entrée user (mais si je fais ça je ne peux pas l'initialiser en premier lieu sauf si je lui met un parametre par defaut)
+
+def print_word() :
+   word = ""
+   for letter in blank_word :
+      word += letter
+   print(word)
 
 # Fonction pour comparer l'entré avec
 def compare_letter(user_letter):
-   global defragmented_word
-   defragmented_word_find = [tulpe for tulpe in defragmented_word if tulpe[0] == user_letter and tulpe[1] != True]
-   if len(defragmented_word_find) > 0 and defragmented_word_find[0][1] != True:
-      print(f"avant modification{defragmented_word_find[0][1]}")
-      defragmented_word.remove((user_letter, False))
+   global tulpe_letter
+   find_tulpe_letter = [tulpe for tulpe in tulpe_letter if tulpe[0] == user_letter]
+   if len(find_tulpe_letter) > 0 and find_tulpe_letter[0][1] != True:
+      tulpe_letter.remove((user_letter, False))
       new_entrie = (user_letter, True)
-      defragmented_word.add(new_entrie)
-      
-
-   elif len(defragmented_word_find) > 0 and defragmented_word_find[0][1] == True: 
+      tulpe_letter.add(new_entrie)
+      return True
+   elif len(find_tulpe_letter) > 0 and find_tulpe_letter[0][1] == True: 
       print("Vous avez deja cette lettre")
-
    else:
      print("Cette lettre n'existe pas")
-   print(f"aprés modification{defragmented_word}")
    
 
 
 # Faire une entrer utilisateur 
-def get_letter_from_user() :
+def get_letter_from_user():
    i=6
-   while i >= 0 :
+   while i >= 0:
     print(print_blank_word)
     user_letter = input("Entrez une lettre. ").lower()
-    if len(user_letter) > 1 :
+    if len(user_letter) > 1:
        print(f"Non vous devez entrez qu'une seule lettre : tentative restante {i}")
-    elif user_letter.isdigit(): 
-       print(f"Non vous devez entrez qu'une seule lettre : tentative restante {i}")
-    else :
-       compare_letter(user_letter)
-       print("jusque là c'est ok")
+    elif user_letter.isdigit():
+       print(f"Non vous devez entrez une seule lettre pas un chiffre : tentative restante {i}")
+    else:
+      # On a bien une lettre valide donc :
+      # 1/je compare la lettre 
+      letter_exist = compare_letter(user_letter)
+      print(letter_exist)
+      if letter_exist: 
+         hide_or_show_letter(word, tulpe_letter)
        
        # Fonction qui compare 
        
        
           
        
-# Comparer le choix utilisateur avec les lettres dans la liste de tulpe, si la lettre est dans dans la liste, elle passe à True et devient visible dans le mot à la place du _ 
-
-# L'utilisateur auras 6 essais et à chaque essais rater le pendu sera construit
-
-# si l'utilsateur à deviner le mot avant la fin de la construction du pendu alors il 
 
 
 # Parametre du jeu
@@ -115,6 +117,7 @@ def main() :
    set_word_for_game()
    # Recupere les tentatives de l'utilisateur 
    get_letter_from_user()
+
 
 
 # on lance le programme
