@@ -1,6 +1,6 @@
 import math
 import random 
-from words import words as w
+from words import words
 from pendu import *
 
 # Variables globales pour gérer l'état du jeu
@@ -9,8 +9,18 @@ tulpe_letter = []  # Liste des lettres sous forme de tuples avec leur état (tro
 blank_word = []  # Représentation actuelle du mot avec les lettres trouvées et les underscores
 i = 10  # Nombre de tentatives restantes
 
-# Bannière du jeu affichée au démarrage
-print(""" 
+#definition d'une classe
+class HangmanGame:
+    def __init__(self):
+        self.word = ""
+        self.letter_state = [] # lettre, trouvé ou non  
+        self.remaining_attemps = 6
+        self.blank_word = []
+
+
+# methode de classe pour afficher la banniere du jeu 
+    def display_banner(self):
+        print(""" 
 ==========================================
 !                                        !     
 !                                        !
@@ -20,10 +30,51 @@ print("""
 ==========================================
 """)
 
+    def choose_word(self):
+        # choisi un mot aléatoire et initialise les états.
+        self.word = random.choice(words).lower()
+        self.letter_state = []
+        # Préparation des lettres pour éviter les doublons
+        seen_letters = set()
+        for letter in word:
+            if letter not in seen_letters:
+                self.letter_state.append((letter, False))
+                seen_letters.add(letter)
+        self.update_blank_word()
+
+    def update_blank_word(self):
+        # Met à jour l'affichage du mot avec soit lettres trouvées si, soit underscore ( _ )
+        self.blank_word = [
+            letter if found else "_" 
+            for letter, found in self.letters_state
+        ]
+
+
+    def display_word(self):
+        # Affiche le mot actuel avec les tentatives restantes
+        print(f"\nTentatives restantes : {self.remaining_attemps}\n{' '.join(self.blank_word)}\n")
+
+    def compare_letter(self, user_letter):
+        # Vérifie si la lettre est correcte et met à jour l'état
+        found = False
+        for index, (letter, guessed) in enumerate(self.letter_state):
+            if letter == user_letter and not guessed:
+                self.letter_state[index] = (letter, True)
+                found = True
+        if not found :
+            print("Cette lettre n'est pas dans le mot.")
+            self.remaining_attemps -= 1
+        return found
+
+#---------------------------------------------------------------------------------------
+
+# Premier code, en cour factorisation en classe.
+
+
 # Fonction pour choisir un mot au hasard dans la liste
 def get_word():
-    index = (math.ceil(random.random() * len(w) - 1))  # Sélectionne un index aléatoire
-    selected_word = w[index]  # Récupère le mot correspondant
+    index = (math.ceil(random.random() * len(word) - 1))  # Sélectionne un index aléatoire
+    selected_word = words[index]  # Récupère le mot correspondant
     return selected_word
 
 # Prépare le mot choisi pour le jeu, avec chaque lettre marquée comme "non trouvée"
@@ -41,9 +92,9 @@ def hide_or_show_letter(word, tulpe_letter):
     blank_word = []  # Réinitialise l'affichage
     for letter in word:
         for tulpe in tulpe_letter:
-            if letter == tulpe[0] and tulpe[1] == False:  # Lettre non trouvée
+            if letter == tulpe[0] and tulpe[1] == False:  # Lettre trouvée mais non decouverte
                 blank_word.append("_")
-            elif letter == tulpe[0] and tulpe[1] == True:  # Lettre trouvée
+            elif letter == tulpe[0] and tulpe[1] == True:  # Lettre trouvée et decouverte par l'utilisateur
                 blank_word.append(tulpe[0])
 
 # Compare la lettre entrée par l'utilisateur avec celles du mot mystère
